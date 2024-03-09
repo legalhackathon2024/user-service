@@ -91,8 +91,10 @@ jobs:
           value: $IMAGE:$GITHUB_SHA
           branch: main
           targetBranch: main
+          masterBranchName: main
           createPR: true
           message: 'Update Image Version to $IMAGE:$GITHUB_SHA'
+
 
       # Deploy the Docker image to the GKE cluster
       - name: Deploy
