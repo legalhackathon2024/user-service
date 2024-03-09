@@ -72,15 +72,15 @@ jobs:
             --build-arg GITHUB_REF="$GITHUB_REF" \
             .
 
-      # Dockerhub login
-      - name: Login
-        run: |-
-          docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+#      # Dockerhub login
+#      - name: Login
+#        run: |-
+#          docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
 
       # Push the Docker image to Google Container Registry
       - name: Publish
         run: |-
-          docker push "$IMAGE:$GITHUB_SHA"
+          docker push "$GAR_ZONE-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/$IMAGE:$GITHUB_SHA"
 
       # Change deployment file
       - name: Update Image Version in the related deployment.yml
