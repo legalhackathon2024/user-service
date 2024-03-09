@@ -13,7 +13,7 @@ spec:
         component: user
     spec:
       containers:
-        - name: user
+        - name: user-service
           image: grzesiekoladele/user:v1
           ports:
             - containerPort: 8080

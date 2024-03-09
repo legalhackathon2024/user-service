@@ -87,7 +87,7 @@ jobs:
         uses: fjogeleit/yaml-update-action@main
         with:
           valueFile: '././k8s/user-deployment.yml'
-          propertyPath: 'spec.template.spec.containers.image'
+          propertyPath: 'spec.template.spec.containers[0].image'
           value: $IMAGE:$GITHUB_SHA
           branch: main
           targetBranch: main
