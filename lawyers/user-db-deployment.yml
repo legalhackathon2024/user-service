@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-database-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: user-database
+  template:
+    metadata:
+      labels:
+        component: user-database
+    spec:
+      volumes:
+        - name: user-storage
+          persistentVolumeClaim:
+            claimName: user-persistent-volume-claim
+      containers:
+        - name: user-database
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: user-storage
+              subPath: user-database
+          envFrom:
+            - configMapRef:
+                name: user-db-config
