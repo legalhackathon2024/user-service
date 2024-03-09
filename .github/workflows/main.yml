@@ -103,7 +103,7 @@ jobs:
           # Add your command(s) here to modify the YAML file
           # For example, to append a line:
           # Replace 'existing_key' with 'new_value' in your-file.yml
-          sed -i 's/image: .*/image: ${IMAGE}:${GITHUB_SHA}/' ././k8s/user-deployment.yml
+          sed -i "s/image: .*/image: ${IMAGE}:${GITHUB_SHA}/" ././k8s/user-deployment.yml
 
       # Commit and push the changes
       - name: Commit and push
