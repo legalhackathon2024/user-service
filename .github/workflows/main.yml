@@ -82,19 +82,38 @@ jobs:
         run: |-
           docker push "$GAR_ZONE-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/$IMAGE:$GITHUB_SHA"
 
-      # Change deployment file
-      - name: Update Image Version in the related deployment.yml
-        uses: fjogeleit/yaml-update-action@main
-        with:
-          valueFile: '././k8s/user-deployment.yml'
-          propertyPath: 'spec.template.spec.containers[0].image'
-          value: $IMAGE:$GITHUB_SHA
-          branch: deployment/$IMAGE:$GITHUB_SHA
-          targetBranch: main
-          masterBranchName: main
-          createPR: true
-          message: 'Update Image Version to $IMAGE:$GITHUB_SHA'
+#      # Change deployment file
+#      - name: Update Image Version in the related deployment.yml
+#        uses: fjogeleit/yaml-update-action@main
+#        with:
+#          valueFile: '././k8s/user-deployment.yml'
+#          propertyPath: 'spec.template.spec.containers[0].image'
+#          value: $IMAGE:$GITHUB_SHA
+#          branch: deployment/$IMAGE:$GITHUB_SHA
+#          targetBranch: main
+#          masterBranchName: main
+#          createPR: true
+#          message: 'Update Image Version to $IMAGE:$GITHUB_SHA'
 
+
+      # Modify the YAML file
+      - name: Update YAML
+        run: |
+          echo "Modifying the YAML file"
+          # Add your command(s) here to modify the YAML file
+          # For example, to append a line:
+          # Replace 'existing_key' with 'new_value' in your-file.yml
+          sed -i 's/image: .*/image: $IMAGE:$GITHUB_SHA' ././k8s/user-deployment.yml
+
+      # Commit and push the changes
+      - name: Commit and push
+        run: |
+          git config --global user.email "deployment@deployment.com"
+          git config --global user.name "Deployment"
+          git add ././k8s/user-deployment.yml
+          git commit -m "Update YAML file via GitHub Actions"
+          git push
+          
       # Deploy the Docker image to the GKE cluster
       - name: Deploy
         run: |-
