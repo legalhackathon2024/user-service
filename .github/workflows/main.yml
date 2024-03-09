@@ -87,7 +87,7 @@ jobs:
         uses: fjogeleit/yaml-update-action@main
         with:
           valueFile: '././k8s/user-deployment.yml'
-          propertyPath: 'spec.template.spec.containers[0].image'
+          propertyPath: 'spec.template.spec.containers.image'
           value: $IMAGE:$GITHUB_SHA
           branch: main
           targetBranch: main
@@ -97,7 +97,7 @@ jobs:
       # Deploy the Docker image to the GKE cluster
       - name: Deploy
         run: |-
-          # gcloud containers clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $PROJECT_ID
-          # kubectl set image deployment/YOUR_DEPLOYMENT_NAME YOUR_CONTAINER_NAME=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
+#           gcloud containers clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $PROJECT_ID
+#           kubectl set image deployment/YOUR_DEPLOYMENT_NAME YOUR_CONTAINER_NAME=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
           kubectl apply -f ././k8s
           kubectl get pods
