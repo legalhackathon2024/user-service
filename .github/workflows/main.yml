@@ -14,6 +14,8 @@ env:
   GAR_REPO: legal-hackathon-repo # artifact registry repository
   CONTAINER_NAME: user-service
   DEPLOYMENT_NAME: user-service-deployment
+  DOCKER_LOGIN: ${{ secrets.DOCKER_LOGIN }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
 jobs:
   build-and-test:
@@ -69,15 +71,33 @@ jobs:
             --build-arg GITHUB_SHA="$GITHUB_SHA" \
             --build-arg GITHUB_REF="$GITHUB_REF" \
             .
+
+      # Dockerhub login
+      - name: Login
+        run: |-
+          docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+
       # Push the Docker image to Google Container Registry
       - name: Publish
         run: |-
-          docker push "$GAR_ZONE-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/$IMAGE:$GITHUB_SHA"
+          docker push "$IMAGE:$GITHUB_SHA"
+
+      # Change deployment file
+      - name: Update Image Version in the related deployment.yml
+        uses: fjogeleit/yaml-update-action@main
+        with:
+          valueFile: '././k8s/user-deployment.yml'
+          propertyPath: 'spec.template.spec.containers.image'
+          value: $IMAGE:$GITHUB_SHA
+          branch: main
+          targetBranch: main
+          createPR: true
+          message: 'Update Image Version to $IMAGE:$GITHUB_SHA'
 
       # Deploy the Docker image to the GKE cluster
       - name: Deploy
         run: |-
-#          gcloud containers clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $PROJECT_ID
-#          kubectl set image deployment/YOUR_DEPLOYMENT_NAME YOUR_CONTAINER_NAME=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
-          kubectl apply -f deploy.yml
+          # gcloud containers clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $PROJECT_ID
+          # kubectl set image deployment/YOUR_DEPLOYMENT_NAME YOUR_CONTAINER_NAME=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
+          kubectl apply -f /k8s
           kubectl get pods
