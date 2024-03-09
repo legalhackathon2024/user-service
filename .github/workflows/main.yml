@@ -66,12 +66,12 @@ jobs:
       # Build the Docker image
       - name: Build
         run: |-
-          docker build \
-            --tag "$IMAGE:$GITHUB_SHA" \
-#            --tag "$GAR_ZONE-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/$IMAGE:$GITHUB_SHA" \
-            --build-arg GITHUB_SHA="$GITHUB_SHA" \
-            --build-arg GITHUB_REF="$GITHUB_REF" \
-            .
+               docker build \
+               --tag "$IMAGE:$GITHUB_SHA" \
+#               --tag "$GAR_ZONE-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/$IMAGE:$GITHUB_SHA" \
+               --build-arg GITHUB_SHA="$GITHUB_SHA" \
+               --build-arg GITHUB_REF="$GITHUB_REF" \
+               .
 
       # Dockerhub login
       - name: Login
@@ -82,29 +82,26 @@ jobs:
       - name: Publish
         run: |-
 #          docker push "$GAR_ZONE-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/$IMAGE:$GITHUB_SHA"
-          docker push "$IMAGE:$GITHUB_SHA"
+               docker push "$IMAGE:$GITHUB_SHA"
 
-#      # Change deployment file
-#      - name: Update Image Version in the related deployment.yml
-#        uses: fjogeleit/yaml-update-action@main
-#        with:
-#          valueFile: '././k8s/user-deployment.yml'
-#          propertyPath: 'spec.template.spec.containers[0].image'
-#          value: $IMAGE:$GITHUB_SHA
-#          branch: deployment/$IMAGE:$GITHUB_SHA
-#          targetBranch: main
-#          masterBranchName: main
-#          createPR: true
-#          message: 'Update Image Version to $IMAGE:$GITHUB_SHA'
+      #      # Change deployment file
+      #      - name: Update Image Version in the related deployment.yml
+      #        uses: fjogeleit/yaml-update-action@main
+      #        with:
+      #          valueFile: '././k8s/user-deployment.yml'
+      #          propertyPath: 'spec.template.spec.containers[0].image'
+      #          value: $IMAGE:$GITHUB_SHA
+      #          branch: deployment/$IMAGE:$GITHUB_SHA
+      #          targetBranch: main
+      #          masterBranchName: main
+      #          createPR: true
+      #          message: 'Update Image Version to $IMAGE:$GITHUB_SHA'
 
 
       # Modify the YAML file
       - name: Update YAML
         run: |
           echo "Modifying the YAML file"
-          # Add your command(s) here to modify the YAML file
-          # For example, to append a line:
-          # Replace 'existing_key' with 'new_value' in your-file.yml
           sed -i "s/image: .*/image: $GAR_ZONE-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/$IMAGE:$GITHUB_SHA/" ././k8s/user-deployment.yml
 
       # Commit and push the changes
