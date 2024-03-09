@@ -87,14 +87,13 @@ jobs:
         uses: fjogeleit/yaml-update-action@main
         with:
           valueFile: '././k8s/user-deployment.yml'
-          propertyPath: 'spec.template.spec.containers.image'
+          propertyPath: 'spec.template.spec.containers[0].image'
           value: $IMAGE:$GITHUB_SHA
           branch: deployment/$IMAGE:$GITHUB_SHA
           targetBranch: main
           masterBranchName: main
           createPR: true
           message: 'Update Image Version to $IMAGE:$GITHUB_SHA'
-
 
       # Deploy the Docker image to the GKE cluster
       - name: Deploy
