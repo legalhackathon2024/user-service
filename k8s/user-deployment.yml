@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: user-service
-          image: $IMAGE:$GITHUB_SHA
+          image: ${IMAGE}:${GITHUB_SHA}
           ports:
             - containerPort: 8080
           envFrom:
