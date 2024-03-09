@@ -101,7 +101,7 @@ jobs:
       - name: Update YAML
         run: |
           echo "Modifying the YAML file"
-          sed -i "s/image: .*/image: $GAR_ZONE-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/$IMAGE:$GITHUB_SHA/" ././k8s/user-deployment.yml
+          sed -i "s/image: .*/image: ${IMAGE}:${GITHUB_SHA}/" ././k8s/user-deployment.yml
 
       # Commit and push the changes
       - name: Commit and push
