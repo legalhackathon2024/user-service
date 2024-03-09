@@ -89,7 +89,7 @@ jobs:
           valueFile: '././k8s/user-deployment.yml'
           propertyPath: 'spec.template.spec.containers.image'
           value: $IMAGE:$GITHUB_SHA
-          branch: main
+          branch: deployment/$IMAGE:$GITHUB_SHA
           targetBranch: main
           masterBranchName: main
           createPR: true
